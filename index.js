@@ -1,76 +1,112 @@
-require('dotenv').config();
-const request = require('request');
+if(!(localStorage.getItem("APP_ID") && localStorage.getItem("API_KEY") && localStorage.getItem("API_HOST"))){
+  throw new Error("Please set configuration vars by visiting config.html in a browser")
+}
 
 const ParseObjectType = function(objName) {
-  const apiHost = process.env.API_HOST || 'http://localhost:4321';
-  this.customRequest = request.defaults({
-    headers: {
-    'X-Parse-Application-Id': process.env.APP_ID,
-    'X-Parse-REST-API-Key': process.env.API_KEY,
+  const apiHost = localStorage.getItem("API_HOST");
+  this.headers = {
+    'X-Parse-Application-Id': localStorage.getItem("APP_ID"),
+    'X-Parse-REST-API-Key': localStorage.getItem("API_KEY"),
     'Content-Type': 'application/json'
-    }
-  });
+  }
   this.objName = objName;
   this.baseUrl = `${apiHost}/parse/classes/${objName}`;
 };
 
 ParseObjectType.prototype.getAll = function(onGet) {
-  this.customRequest(this.baseUrl, (err, httpR, body) => {
-    if (err) {
-      onGet(err);
+  var request = new XMLHttpRequest();
+  request.open("GET", this.baseUrl, true);
+  for(var header in this.headers){
+    request.setRequestHeader(header, this.headers[header]);
+  }
+  request.send();
+  request.onload = function(){
+    if(this.status >= 200 && this.status < 400){
+      parseResponse(this.response, onGet);
     } else {
-      parseResponse(body, onGet);
+      onGet(this.response);
     }
-  });
+  }
+  request.onerror = function(e){
+    throw new Error(e);
+  }
 };
 
 ParseObjectType.prototype.get = function(id, onGet) {
   const requestUrl = `${this.baseUrl}/${id}`;
-  this.customRequest(requestUrl, (err, httpR, body) => {
-    if (err) {
-      onGet(err);
+  var request = new XMLHttpRequest();
+  request.open("GET", requestUrl, true);
+  for(var header in this.headers){
+    request.setRequestHeader(header, this.headers[header]);
+  }
+  request.send();
+  request.onload = function(){
+    if(this.status >= 200 && this.status < 400){
+      parseResponse(this.response, onGet);
     } else {
-      parseResponse(body, onGet);
+      onGet(this.response);
     }
-  });
+  }
+  request.onerror = function(e){
+    throw new Error(e);
+  }
 };
 
 ParseObjectType.prototype.create = function(props, onCreate) {
-  this.customRequest.post({
-    url: this.baseUrl,
-    form: props
-  },
-  (err, httpR, body) => {
-    if (err) {
-      onCreate(err);
+  var request = new XMLHttpRequest();
+  request.open("POST", this.baseUrl, true);
+  for(var header in this.headers){
+    request.setRequestHeader(header, this.headers[header]);
+  }
+  request.send(JSON.stringify(props));
+  request.onload = function(){
+    if(this.status >= 200 && this.status < 400){
+      parseResponse(this.response, onCreate);
     } else {
-      parseResponse(body, onCreate);
+      onCreate(this.response);
     }
-  });
+  }
+  request.onerror = function(e){
+    throw new Error(e);
+  }
 };
 
 ParseObjectType.prototype.update = function(objId, props, onUpdate) {
-  this.customRequest.put({
-    url: `${this.baseUrl}/${objId}`,
-    form: props
-  },
-  (err, httpR, body) => {
-    if (err) {
-      onUpdate(err);
+  var request = new XMLHttpRequest();
+  request.open("PUT", this.baseUrl + '/' + objId, true);
+  for(var header in this.headers){
+    request.setRequestHeader(header, this.headers[header]);
+  }
+  request.send(JSON.stringify(props));
+  request.onload = function(){
+    if(this.status >= 200 && this.status < 400){
+      parseResponse(this.response, onUpdate);
     } else {
-      parseResponse(body, onUpdate);
+      onUpdate(this.response);
     }
-  });
+  }
+  request.onerror = function(e){
+    throw new Error(e);
+  }
 };
 
 ParseObjectType.prototype.remove = function(objId, onRemove) {
-  this.customRequest.delete(this.baseUrl + '/' + objId, (err) => {
-    if (err) {
-      onRemove(err);
-    } else {
+  var request = new XMLHttpRequest();
+  request.open("DELETE", this.baseUrl + '/' + objId, true);
+  for(var header in this.headers){
+    request.setRequestHeader(header, this.headers[header]);
+  }
+  request.send();
+  request.onload = function(){
+    if(this.status >= 200 && this.status < 400){
       onRemove(null, { message: `Successfully deleted object ${objId}` });
+    } else {
+      onRemove(this.response);
     }
-  });
+  }
+  request.onerror = function(e){
+    throw new Error(e);
+  }
 };
 
 function parseResponse(body, callback) {
@@ -83,6 +119,6 @@ function parseResponse(body, callback) {
   }
 }
 
-module.exports = function(objType, local) {
+TypeFactory = function(objType, local) {
 	return new ParseObjectType(objType, local);
 };

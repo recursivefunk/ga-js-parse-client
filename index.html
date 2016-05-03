@@ -1,0 +1,13 @@
+<!doctype html>
+<html>
+<head>Parse Client</head>
+<body>
+<script src="./index.js"></script>
+<script>
+var Car = new ParseObjectType("Car")
+Car.create({color:'red'}, function(err, result){
+  console.log(err, result)
+})
+</script>
+</body>
+</html>
