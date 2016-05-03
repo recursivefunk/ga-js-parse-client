@@ -7,7 +7,11 @@ describe("TypeFactory", function(){
     TestType1.create({foo:'bar'}, function(err, result){
       expect(err).toBeFalsy();
       expect(result.objectId).toBeTruthy();
-      done();
+      TestType1.get(result.objectId, function(err, result){
+        expect(err).toBeFalsy()
+        expect(result.foo).toEqual('bar')
+        done();
+      })
     })
   })
 })

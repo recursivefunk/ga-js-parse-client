@@ -25,13 +25,22 @@ ParseObjectType.prototype.getAll = function(onGet) {
 
 ParseObjectType.prototype.get = function(id, onGet) {
   const requestUrl = `${this.baseUrl}/${id}`;
-  this.customRequest(requestUrl, (err, httpR, body) => {
-    if (err) {
-      onGet(err);
+  var request = new XMLHttpRequest();
+  request.open("GET", requestUrl, true);
+  for(var header in this.headers){
+    request.setRequestHeader(header, this.headers[header]);
+  }
+  request.send();
+  request.onload = function(){
+    if(this.status >= 200 && this.status < 400){
+      parseResponse(this.response, onGet);
     } else {
-      parseResponse(body, onGet);
+      onGet(this.response);
     }
-  });
+  }
+  request.onerror = function(e){
+    throw new Error(e);
+  }
 };
 
 ParseObjectType.prototype.create = function(props, onCreate) {
