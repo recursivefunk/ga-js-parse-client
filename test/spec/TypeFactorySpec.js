@@ -1,13 +1,10 @@
 
 describe("TypeFactory", function(){
-  beforeEach(function(){
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
-  })
+  var TestType1 = TypeFactory('TestType1');
   it("loads environment variables from localstorage", function(){
     expect(localStorage.getItem("APP_ID")).toBeTruthy()
   })
   it("creates an object", function(done){
-    var TestType1 = TypeFactory('TestType1');
     TestType1.create({foo:'bar'}, function(err, result){
       expect(err).toBeFalsy();
       expect(result.objectId).toBeTruthy();
@@ -19,7 +16,6 @@ describe("TypeFactory", function(){
     })
   })
   it("deletes an object", function(done){
-    var TestType1 = TypeFactory('TestType1');
     TestType1.create({beep:'boop'}, function(err, result){
       expect(err).toBeFalsy();
       expect(result.objectId).toBeTruthy();
@@ -33,6 +29,20 @@ describe("TypeFactory", function(){
           expect(err).toBeFalsy()
           expect(result.message).toEqual("Successfully deleted object " + objectId)
           console.log("removed")
+          done()
+        })
+      })
+    })
+  })
+  it("updates an object", function(done){
+    TestType1.create({foo:'bar'}, function(err, result){
+      expect(err).toBeFalsy();
+      expect(result.objectId).toBeTruthy();
+      TestType1.update(result.objectId, {foo:'beep'}, function(err){
+        expect(err).toBeFalsy();
+        TestType1.get(result.objectId, function(err, result){
+          expect(err).toBeFalsy()
+          expect(result.foo).toEqual("beep");
           done()
         })
       })

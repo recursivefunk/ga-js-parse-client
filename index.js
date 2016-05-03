@@ -14,13 +14,22 @@ const ParseObjectType = function(objName) {
 };
 
 ParseObjectType.prototype.getAll = function(onGet) {
-  this.customRequest(this.baseUrl, (err, httpR, body) => {
-    if (err) {
-      onGet(err);
+  var request = new XMLHttpRequest();
+  request.open("GET", this.baseUrl, true);
+  for(var header in this.headers){
+    request.setRequestHeader(header, this.headers[header]);
+  }
+  request.send();
+  request.onload = function(){
+    if(this.status >= 200 && this.status < 400){
+      parseResponse(this.response, onGet);
     } else {
-      parseResponse(body, onGet);
+      onGet(this.response);
     }
-  });
+  }
+  request.onerror = function(e){
+    throw new Error(e);
+  }
 };
 
 ParseObjectType.prototype.get = function(id, onGet) {
@@ -63,17 +72,22 @@ ParseObjectType.prototype.create = function(props, onCreate) {
 };
 
 ParseObjectType.prototype.update = function(objId, props, onUpdate) {
-  this.customRequest.put({
-    url: `${this.baseUrl}/${objId}`,
-    form: props
-  },
-  (err, httpR, body) => {
-    if (err) {
-      onUpdate(err);
+  var request = new XMLHttpRequest();
+  request.open("PUT", this.baseUrl + '/' + objId, true);
+  for(var header in this.headers){
+    request.setRequestHeader(header, this.headers[header]);
+  }
+  request.send(JSON.stringify(props));
+  request.onload = function(){
+    if(this.status >= 200 && this.status < 400){
+      parseResponse(this.response, onUpdate);
     } else {
-      parseResponse(body, onUpdate);
+      onUpdate(this.response);
     }
-  });
+  }
+  request.onerror = function(e){
+    throw new Error(e);
+  }
 };
 
 ParseObjectType.prototype.remove = function(objId, onRemove) {
