@@ -12,7 +12,7 @@ $ npm install
 
 Open up `app.js`
 
-```
+```javascript
 // First define the type of object you want to work with. 
 // This can be named anything you like!
 var MyTypeFactory = require('./index.js');
@@ -32,7 +32,7 @@ MyType.create({ foo: 'bar' }, function(err, result) {
 
 Creating an object
 
-```
+```javascript
 MyType.create(myobj, callbackFunction);
 ```
 
@@ -40,7 +40,7 @@ MyType.create(myobj, callbackFunction);
 
 Getting an existing object
 
-```
+```javascript
 MyType.get(objectId, callbackFunction);
 ```
 
@@ -48,7 +48,7 @@ MyType.get(objectId, callbackFunction);
 
 Get *ALL* objects that have been created
 
-```
+```javascript
 MyType.getAll(callbackFunction);
 ```
 
@@ -56,7 +56,7 @@ MyType.getAll(callbackFunction);
 
 Updating an existing object
 
-```
+```javascript
 MyType.update(objectId, updatedProps, callbackFunction);
 ```
 
@@ -64,7 +64,7 @@ MyType.update(objectId, updatedProps, callbackFunction);
 
 Delete an existing object
 
-```
+```javascript
 MyType.remove(objectId, callbackFunction);
 ```
 
