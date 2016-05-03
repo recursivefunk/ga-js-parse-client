@@ -1,14 +1,14 @@
-var request
+if(!(localStorage.getItem("APP_ID") && localStorage.getItem("API_KEY") && localStorage.getItem("API_HOST"))){
+  throw new Error("Please set configuration vars by visiting config.html in a browser")
+}
 
 const ParseObjectType = function(objName) {
-  const apiHost = process.env.API_HOST || 'http://localhost:4321';
-  this.customRequest = request.defaults({
-    headers: {
-    'X-Parse-Application-Id': process.env.APP_ID,
-    'X-Parse-REST-API-Key': process.env.API_KEY,
+  const apiHost = localStorage.getItem("API_HOST");
+  this.headers = {
+    'X-Parse-Application-Id': localStorage.getItem("APP_ID"),
+    'X-Parse-REST-API-Key': localStorage.getItem("API_KEY"),
     'Content-Type': 'application/json'
-    }
-  });
+  }
   this.objName = objName;
   this.baseUrl = `${apiHost}/parse/classes/${objName}`;
 };
@@ -35,17 +35,22 @@ ParseObjectType.prototype.get = function(id, onGet) {
 };
 
 ParseObjectType.prototype.create = function(props, onCreate) {
-  this.customRequest.post({
-    url: this.baseUrl,
-    form: props
-  },
-  (err, httpR, body) => {
-    if (err) {
-      onCreate(err);
+  var request = new XMLHttpRequest();
+  request.open("POST", this.baseUrl, true);
+  for(var header in this.headers){
+    request.setRequestHeader(header, this.headers[header]);
+  }
+  request.send(JSON.stringify(props));
+  request.onload = function(){
+    if(this.status >= 200 && this.status < 400){
+      parseResponse(this.response, onCreate);
     } else {
-      parseResponse(body, onCreate);
+      onCreate(this.response);
     }
-  });
+  }
+  request.onerror = function(e){
+    throw new Error(e);
+  }
 };
 
 ParseObjectType.prototype.update = function(objId, props, onUpdate) {
