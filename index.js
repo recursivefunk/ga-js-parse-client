@@ -78,7 +78,7 @@ function parseResponse(body, callback) {
     const data = JSON.parse(body);
     callback(null, data);
   } catch(e) {
-    console.error(e);
+    console.error(e.stack);
     callback(Error(`An error occured while parsing response: ${e.message}`));
   }
 }

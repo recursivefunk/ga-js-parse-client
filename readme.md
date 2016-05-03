@@ -1,10 +1,12 @@
 ## Setup your environment
 
 ```
+$ git clone https://github.com/recursivefunk/ga-js-parse-client
+$ cd ga-js-parse-client
 $ touch .env
 $ echo "APP_ID=ga-js-ps" >> .env
-$ echo "APP_KEY=<GET THIS VALUE FROM JOHNNY>" >> .env
-$ echo "APP_HOST=<GET THIS VALUE FROM JOHNNY>" >> .env
+$ echo "API_KEY=<GET THIS VALUE FROM JOHNNY>" >> .env
+$ echo "API_HOST=<GET THIS VALUE FROM JOHNNY>" >> .env
 $ npm install
 ```
 
