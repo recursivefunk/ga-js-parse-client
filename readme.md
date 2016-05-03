@@ -3,22 +3,21 @@
 ```
 $ git clone https://github.com/recursivefunk/ga-js-parse-client
 $ cd ga-js-parse-client
-$ touch .env
-$ echo "APP_ID=ga-js-ps" >> .env
-$ echo "API_KEY=<GET THIS VALUE FROM JOHNNY>" >> .env
-$ echo "API_HOST=<GET THIS VALUE FROM JOHNNY>" >> .env
-$ npm install
+$ open config.html
+# fill out values you get from Johnny
 ```
 
 ## Quick Start
 
-Open up `app.js`
+Open up `index.html`
 
 ```javascript
 // First define the type of object you want to work with. 
 // This can be named anything you like!
-var MyTypeFactory = require('./index.js');
-var MyType = MyTypeFactory('MyType');
+var MyType = new ParseObjectType("Car")
+MyType.create({color:'red'}, function(err, result){
+  console.log(err, result)
+})
 
 // Now you can start creating instances of your object type! Everything in 
 // the API is asynchronous so remember your callback functions!
@@ -77,5 +76,5 @@ MyType.remove(objectId, callbackFunction);
 Testing is Fundamental :)
 
 ```
-npm test
+$ open test/index.html
 ```
