@@ -1,0 +1,19 @@
+{
+  "name": "ga-js-parse-client",
+  "version": "1.0.0",
+  "description": "A learning tool for CRUD operations for General Assembly - DC JS1",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test/test.js | tnyan"
+  },
+  "author": "Johnny Ray Austin <johnny@johnnyray.me>",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^2.0.0",
+    "request": "^2.72.0"
+  },
+  "devDependencies": {
+    "tap-nyan": "0.0.2",
+    "tape": "^4.5.1"
+  }
+}
