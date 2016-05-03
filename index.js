@@ -1,5 +1,4 @@
-require('dotenv').config();
-const request = require('request');
+var request
 
 const ParseObjectType = function(objName) {
   const apiHost = process.env.API_HOST || 'http://localhost:4321';
@@ -83,6 +82,6 @@ function parseResponse(body, callback) {
   }
 }
 
-module.exports = function(objType, local) {
+TypeFactory = function(objType, local) {
 	return new ParseObjectType(objType, local);
 };
