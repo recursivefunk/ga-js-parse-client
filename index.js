@@ -77,13 +77,22 @@ ParseObjectType.prototype.update = function(objId, props, onUpdate) {
 };
 
 ParseObjectType.prototype.remove = function(objId, onRemove) {
-  this.customRequest.delete(this.baseUrl + '/' + objId, (err) => {
-    if (err) {
-      onRemove(err);
-    } else {
+  var request = new XMLHttpRequest();
+  request.open("DELETE", this.baseUrl + '/' + objId, true);
+  for(var header in this.headers){
+    request.setRequestHeader(header, this.headers[header]);
+  }
+  request.send();
+  request.onload = function(){
+    if(this.status >= 200 && this.status < 400){
       onRemove(null, { message: `Successfully deleted object ${objId}` });
+    } else {
+      onRemove(this.response);
     }
-  });
+  }
+  request.onerror = function(e){
+    throw new Error(e);
+  }
 };
 
 function parseResponse(body, callback) {
